@@ -36,11 +36,14 @@ jobs:
           fi
 
       - name: Update Gist (optional)
-        if: ${{ secrets.GIST_TOKEN != '' && secrets.GIST_ID != '' }}
         env:
           GH_TOKEN: ${{ secrets.GIST_TOKEN }}
           GIST_ID: ${{ secrets.GIST_ID }}
         run: |
+          if [ -z "$GH_TOKEN" ] || [ -z "$GIST_ID" ]; then
+            echo "Skipping Gist update (GIST_TOKEN or GIST_ID not configured)"
+            exit 0
+          fi
           jq -n '{files: {}}' > /tmp/gist_payload.json
           for file in lists/*.txt; do
             filename=$(basename "$file")
