@@ -1,0 +1,56 @@
+name: Convert OISD lists
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/convert.yml"
+      - "scripts/convert.sh"
+
+permissions:
+  contents: write
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Convert lists
+        run: bash scripts/convert.sh lists
+
+      - name: Commit updated lists
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add lists/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update OISD plain lists [skip ci]"
+            git push
+          fi
+
+      - name: Update Gist (optional)
+        if: ${{ secrets.GIST_TOKEN != '' && secrets.GIST_ID != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GIST_TOKEN }}
+          GIST_ID: ${{ secrets.GIST_ID }}
+        run: |
+          jq -n '{files: {}}' > /tmp/gist_payload.json
+          for file in lists/*.txt; do
+            filename=$(basename "$file")
+            content=$(cat "$file" | jq -Rs .)
+            jq --arg f "$filename" --argjson c "$content" \
+              '.files[$f] = {content: $c}' \
+              /tmp/gist_payload.json > /tmp/gist_tmp.json && mv /tmp/gist_tmp.json /tmp/gist_payload.json
+          done
+
+          curl -sL -X PATCH "https://api.github.com/gists/$GIST_ID" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d @/tmp/gist_payload.json
