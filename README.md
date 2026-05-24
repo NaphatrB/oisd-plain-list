@@ -26,7 +26,6 @@ Strips subdomains to keep only `<domain>.<tld>`, making lists smaller for router
 
 | File | Source | Domains | Size | Description |
 |------|--------|---------|------|-------------|
-| [`nsfw-xsmall.txt`](lists/nsfw-xsmall.txt) | nsfw-small.txt | 17,184 | 246 KB | Same as `nsfw-small.txt` (already bare domains) |
 | [`bon-appetite-nsfw-xsmall.txt`](lists/bon-appetite-nsfw-xsmall.txt) | bon-appetite-nsfw.txt | 398,023 | 6.0 MB | ~43% smaller than `bon-appetite-nsfw.txt` |
 
 ## GL.iNet Subscription URLs
