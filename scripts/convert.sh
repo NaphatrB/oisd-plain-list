@@ -107,8 +107,12 @@ if ! python3 -c "import tldextract" 2>/dev/null; then
     echo "Installing tldextract..."
     python3 -m pip install tldextract --quiet
 fi
-for src in nsfw.txt bon-appetite-nsfw.txt; do
-    xsmall_out="$OUTPUT_DIR/${src%.txt}-xsmall.txt"
+for src in nsfw-small.txt bon-appetite-nsfw.txt; do
+    if [ "$src" = "nsfw-small.txt" ]; then
+        xsmall_out="$OUTPUT_DIR/nsfw-xsmall.txt"
+    else
+        xsmall_out="$OUTPUT_DIR/${src%.txt}-xsmall.txt"
+    fi
     if [ -f "$OUTPUT_DIR/$src" ]; then
         python3 scripts/xsmall.py --input "$OUTPUT_DIR/$src" --output "$xsmall_out"
     fi
