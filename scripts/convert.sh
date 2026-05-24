@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Activate local venv if present so tldextract/python libs are available
+VENV=".venv"
+if [ -d "$VENV" ]; then
+    source "$VENV/bin/activate"
+fi
+
 fetch_bon_appetit_url() {
     local meta_url="https://raw.githubusercontent.com/Bon-Appetit/porn-domains/main/meta.json"
     local tmpfile
@@ -94,6 +100,21 @@ for url in "${!LISTS[@]}"; do
     convert_list "$url" "${LISTS[$url]}"
 done
 
+# Generate xsmall (registered-domain-only) variants for NSFW lists
+echo ""
+echo "Generating xsmall (registered-domain-only) variants..."
+if ! python3 -c "import tldextract" 2>/dev/null; then
+    echo "Installing tldextract..."
+    python3 -m pip install tldextract --quiet
+fi
+for src in nsfw.txt bon-appetite-nsfw.txt; do
+    xsmall_out="$OUTPUT_DIR/${src%.txt}-xsmall.txt"
+    if [ -f "$OUTPUT_DIR/$src" ]; then
+        python3 scripts/xsmall.py --input "$OUTPUT_DIR/$src" --output "$xsmall_out"
+    fi
+done
+
+echo ""
 echo "Done. All lists saved to $OUTPUT_DIR/"
 echo ""
 echo "File sizes:"

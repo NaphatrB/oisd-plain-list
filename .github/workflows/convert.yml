@@ -30,7 +30,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install dnspython
+        run: pip install dnspython tldextract
 
       - name: Update and validate lists
         run: bash scripts/update.sh

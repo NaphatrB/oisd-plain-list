@@ -18,7 +18,7 @@ done
 
 if [ "$need_bootstrap" = true ]; then
     echo "Active lists missing; running full validation..."
-    for list in big small nsfw nsfw-small stephen-black-nsfw bon-appetite-nsfw; do
+    for list in big small nsfw nsfw-small stephen-black-nsfw bon-appetite-nsfw nsfw-xsmall bon-appetite-nsfw-xsmall; do
         echo ""
         echo "=== Full validation for ${list} ==="
         python3 scripts/validate.py --mode full \
@@ -30,7 +30,7 @@ if [ "$need_bootstrap" = true ]; then
 else
     letter=$(cat .last-validated-letter)
     echo "Running incremental validation for letter: $letter"
-    for list in big small nsfw nsfw-small stephen-black-nsfw bon-appetite-nsfw; do
+    for list in big small nsfw nsfw-small stephen-black-nsfw bon-appetite-nsfw nsfw-xsmall bon-appetite-nsfw-xsmall; do
         echo ""
         echo "=== Incremental ${list} (letter ${letter}) ==="
         python3 scripts/validate.py --mode incremental \
