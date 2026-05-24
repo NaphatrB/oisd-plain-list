@@ -9,10 +9,14 @@ on:
       - main
     paths:
       - ".github/workflows/convert.yml"
-      - "scripts/convert.sh"
+      - "scripts/**"
 
 permissions:
   contents: write
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   convert:
@@ -20,18 +24,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Convert lists
-        run: bash scripts/convert.sh lists
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install dnspython
+
+      - name: Update and validate lists
+        run: bash scripts/update.sh
 
       - name: Commit updated lists
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add lists/
+          git add lists/ .last-validated-letter .gitattributes
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
             git commit -m "Update OISD plain lists [skip ci]"
             git push
           fi
-
