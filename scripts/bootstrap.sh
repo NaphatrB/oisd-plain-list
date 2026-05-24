@@ -19,7 +19,7 @@ fi
 echo "Converting OISD lists..."
 bash scripts/convert.sh lists
 
-for list in big small nsfw nsfw-small stephen-black-nsfw; do
+for list in big small nsfw nsfw-small stephen-black-nsfw bon-appetite-nsfw; do
     echo ""
     echo "=== Bootstrapping ${list} ==="
     python3 scripts/validate.py --mode full \

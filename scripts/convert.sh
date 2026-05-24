@@ -1,6 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+fetch_bon_appetit_url() {
+    local meta_url="https://raw.githubusercontent.com/Bon-Appetit/porn-domains/main/meta.json"
+    local tmpfile
+    tmpfile=$(mktemp)
+    if curl -sL --max-time 30 "$meta_url" > "$tmpfile" 2>/dev/null; then
+        local filename
+        filename=$(grep -oP '"name":\s*"\K[^"]+' "$tmpfile" | grep '^block\.' | head -n1)
+        rm -f "$tmpfile"
+        if [ -n "$filename" ]; then
+            echo "https://raw.githubusercontent.com/Bon-Appetit/porn-domains/main/$filename"
+            return 0
+        fi
+    fi
+    rm -f "$tmpfile"
+    return 1
+}
+
 # OISD lists: URL -> output filename
 declare -A LISTS
 LISTS["https://big.oisd.nl"]="big.txt"
@@ -10,6 +27,14 @@ LISTS["https://nsfw-small.oisd.nl"]="nsfw-small.txt"
 
 # Custom hosts-format lists
 LISTS["https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn-only/hosts"]="stephen-black-nsfw.txt"
+
+# Dynamically resolve Bon-Appetit blocklist URL
+BON_APPETIT_URL=$(fetch_bon_appetit_url || true)
+if [ -n "$BON_APPETIT_URL" ]; then
+    LISTS["$BON_APPETIT_URL"]="bon-appetite-nsfw.txt"
+else
+    echo "WARNING: Could not resolve Bon-Appetit blocklist URL; skipping."
+fi
 
 OUTPUT_DIR="${1:-lists}"
 
