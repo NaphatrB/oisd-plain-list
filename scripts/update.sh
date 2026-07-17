@@ -25,7 +25,7 @@ if [ "$need_bootstrap" = true ]; then
             --source "lists/${list}.txt" \
             --output-active "lists/${list}-active.txt" \
             --output-inactive "lists/${list}-inactive.txt" \
-            --concurrency "${BOOTSTRAP_CONCURRENCY:-200}"
+            --max-workers "${BOOTSTRAP_CONCURRENCY:-200}"
     done
 else
     letter=$(cat .last-validated-letter)
@@ -38,7 +38,7 @@ else
             --active "lists/${list}-active.txt" \
             --inactive "lists/${list}-inactive.txt" \
             --letter "$letter" \
-            --concurrency "${INCREMENTAL_CONCURRENCY:-50}"
+            --max-workers "${INCREMENTAL_CONCURRENCY:-50}"
     done
 
     # Rotate letter: a -> b -> ... -> z -> 0 -> a
