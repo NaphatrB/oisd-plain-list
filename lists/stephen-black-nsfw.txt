@@ -21328,9 +21328,11 @@ heovl.bot
 heovl.cc
 heovl.com
 heovl.fun
+heovl.im
 heovl.live
 heovl.me
 heovl.moe
+heovl.name
 heovl.net
 heovl.tube
 heovl.tv
@@ -27729,6 +27731,7 @@ javhd.icu
 javhd.im
 javhd.lol
 javhd.moe
+javhd.mov
 javhd.network
 javhd.ninja
 javhd.one
@@ -27769,6 +27772,7 @@ javhdpornx.com
 javhdsex.net
 javhdvietsub.com
 javhdworld.com
+javhdz.ac
 javhdz.cam
 javhdz.city
 javhdz.fun
